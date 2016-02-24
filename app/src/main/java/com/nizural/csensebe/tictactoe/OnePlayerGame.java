@@ -79,11 +79,19 @@ public class OnePlayerGame extends AppCompatActivity {
 
     private boolean isEndGame(char playerChar, int rowNumber, int columnNumber) {
         if(isVictory(playerChar, rowNumber, columnNumber)){
-            Toast.makeText(this, getString(R.string.player_victory_message), Toast.LENGTH_SHORT).show();
-            mPlayerScore++;
-            initBoard();
-            updateScreen();
-            return true;
+            if(playerChar == PLAYER_CHAR){
+                Toast.makeText(this, getString(R.string.player_victory_message), Toast.LENGTH_SHORT).show();
+                mPlayerScore++;
+                initBoard();
+                updateScreen();
+                return true;
+            } else {
+                Toast.makeText(this, getString(R.string.program_victory_message), Toast.LENGTH_SHORT).show();
+                mProgrammScore++;
+                initBoard();
+                updateScreen();
+                return true;
+            }
         } else if (isFullBoard()) {
             Toast.makeText(this, getString(R.string.no_victory_message), Toast.LENGTH_SHORT).show();
             initBoard();
