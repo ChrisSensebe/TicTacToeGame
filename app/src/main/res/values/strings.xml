@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">TicTacToe</string>
+    <string name="home_screen_button_one_player">1 joueur</string>
+    <string name="home_screen_text_view_select_game_mode">Choisissez votre mode de jeu</string>
+    <string name="home_screen_button_two_players">2 joueurs</string>
+    <string name="one_player_text_view_title">1 joueur</string>
+    <string name="one_player_button_back">Menu principal</string>
+    <string name="one_player_button_replay">Nouvelle partie</string>
+    <string name="one_player_text_view_player_score_label">Votre score</string>
+    <string name="one_player_text_view_program_score_label">Score du programme</string>
+    <string name="player_victory_message">Vous avez gagné</string>
+    <string name="program_victory_message">Vous avez perdu</string>
+    <string name="no_victory_message">Match nul</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".HomeActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/home_screen_text_view_select_game_mode"
+        style="?android:listSeparatorTextViewStyle"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:layout_width="@dimen/home_screen_button_width"
+            android:layout_height="wrap_content"
+            android:text="@string/home_screen_button_one_player"
+            android:onClick="launchOnePlayerGame"/>
+        <Button
+            android:layout_width="@dimen/home_screen_button_width"
+            android:layout_height="wrap_content"
+            android:text="@string/home_screen_button_two_players"
+            android:onClick="launchTwoPlayersGame"/>
+    </LinearLayout>
+</RelativeLayout>
