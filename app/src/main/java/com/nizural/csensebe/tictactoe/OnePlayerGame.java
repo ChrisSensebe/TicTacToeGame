@@ -77,8 +77,8 @@ public class OnePlayerGame extends AppCompatActivity {
         mTextViewProgramScore.setText(String.valueOf(mProgrammScore));
     }
 
-    private boolean isEndGame(char playerChar) {
-        if(isVictory(playerChar)){
+    private boolean isEndGame(char playerChar, int rowNumber, int columnNumber) {
+        if(isVictory(playerChar, rowNumber, columnNumber)){
             Toast.makeText(this, getString(R.string.player_victory_message), Toast.LENGTH_SHORT).show();
             mPlayerScore++;
             initBoard();
@@ -93,42 +93,30 @@ public class OnePlayerGame extends AppCompatActivity {
         return false;
     }
 
-    private boolean isVictory(char playerChar) {
-        return isWinningRow(playerChar) || isWinningColumn(playerChar) ||
-                isWInningBackwardDiagonal(playerChar) || isWinningForwardDiagonal(playerChar);
+    private boolean isVictory(char playerChar, int rowNumber, int columnNumber) {
+        if(isWinningRow(playerChar, rowNumber)){
+            return true;
+        } else if (isWinningColumn(playerChar, columnNumber)){
+            return true;
+        } else if (isWinningForwardDiagonal(playerChar)){
+            return true;
+        } else if (isWInningBackwardDiagonal(playerChar)){
+            return true;
+        } return false;
     }
 
-    private boolean isWinningRow(char playerChar) {
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            boolean isWinning = true;
-            for (int j = 0; j < BOARD_ROWS_AND_COLUMNS_LENGTH; j++){
-                isWinning = isWinning && playerChar == mBoard[i][j];
-            }
-            if(isWinning){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isWinningColumn(char playerChar) {
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            boolean isWinning = true;
-            for (int j = 0; j < BOARD_ROWS_AND_COLUMNS_LENGTH; j++){
-                isWinning = isWinning && playerChar == mBoard[j][i];
-            }
-            if(isWinning){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isWInningBackwardDiagonal(char playerChar) {
-        int colPosition = BOARD_ROWS_AND_COLUMNS_LENGTH;
+    private boolean isWinningRow(char playerChar, int rowNumber) {
         boolean isWinning = true;
-        for(int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            isWinning = isWinning && playerChar == mBoard[i][--colPosition];
+        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
+            isWinning = isWinning && mBoard[rowNumber][i] == playerChar;
+        }
+        return isWinning;
+    }
+
+    private boolean isWinningColumn(char playerChar, int columnNumber) {
+        boolean isWinning = true;
+        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
+            isWinning = isWinning && mBoard[i][columnNumber] == playerChar;
         }
         return isWinning;
     }
@@ -137,6 +125,15 @@ public class OnePlayerGame extends AppCompatActivity {
         boolean isWinning = true;
         for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
             isWinning = isWinning && playerChar == mBoard[i][i];
+        }
+        return isWinning;
+    }
+
+    private boolean isWInningBackwardDiagonal(char playerChar) {
+        int colPosition = BOARD_ROWS_AND_COLUMNS_LENGTH;
+        boolean isWinning = true;
+        for(int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
+            isWinning = isWinning && playerChar == mBoard[i][--colPosition];
         }
         return isWinning;
     }
@@ -159,7 +156,7 @@ public class OnePlayerGame extends AppCompatActivity {
         int columnNumber = tableRow.indexOfChild(buttonClicked);
         if(updateBoardState(rowNumber, columnNumber, PLAYER_CHAR)){
             updateScreen();
-            if(!isEndGame(PLAYER_CHAR)){
+            if(!isEndGame(PLAYER_CHAR, rowNumber, columnNumber)){
                 programTurn();
             }
         }
@@ -174,7 +171,7 @@ public class OnePlayerGame extends AppCompatActivity {
         }
         while (!updateBoardState(rowNumber, columnNumber, PROGRAM_CHAR));
         updateScreen();
-        isEndGame(PROGRAM_CHAR);
+        isEndGame(PROGRAM_CHAR, rowNumber, columnNumber);
     }
 
     private int randomPosition(int minPosition, int maxPosition) {
