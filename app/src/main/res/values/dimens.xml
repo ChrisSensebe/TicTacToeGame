@@ -5,4 +5,5 @@
     <dimen name="home_screen_button_width">192dp</dimen>
     <dimen name="game_grid_button_size">96dp</dimen>
     <dimen name="game_menu_button_width">172dp</dimen>
+    <dimen name="one_player_score_text_size">18sp</dimen>
 </resources>
