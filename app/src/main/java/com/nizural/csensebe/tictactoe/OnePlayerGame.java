@@ -78,7 +78,7 @@ public class OnePlayerGame extends AppCompatActivity {
     }
 
     private boolean isEndGame(char playerChar) {
-        if(isVictory(PLAYER_CHAR)){
+        if(isVictory(playerChar)){
             Toast.makeText(this, getString(R.string.player_victory_message), Toast.LENGTH_SHORT).show();
             mPlayerScore++;
             initBoard();
