@@ -8,183 +8,56 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.Random;
+import com.nizural.csensebe.tictactoe.game.TicTacToeGame;
 
 public class OnePlayerGame extends AppCompatActivity {
 
-    private static final int BOARD_ROWS_AND_COLUMNS_LENGTH = 3;
-    private static final int STARTING_PLAYER_SCORE = 0;
-    private static final int STARTING_PROGRAM_SCORE = 0;
-    private static final char NEUTRAL_CHAR = '-';
-    private static final char PLAYER_CHAR = 'O';
-    private static final char PROGRAM_CHAR = 'X';
-    private static final String PLAYER_SCORE_KEY = "playerScore";
-    private static final String PROGRAM_SCORE_KEY = "programScore";
+    private static final String GAME_KEY = "game";
+    private static final String PLAYER_NAME = "player";
+    private static final String AI_NAME = "program";
+    private static final int BOARD_SIZE = 3;
 
     private TextView mTextViewPlayerScore;
     private TextView mTextViewProgramScore;
     private TableLayout mTableLayoutGameBoard;
-    private int mPlayerScore;
-    private int mProgrammScore;
-    private char[][] mBoard;
+    private TicTacToeGame mGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_player_game);
-        initGame();
-    }
-
-    private void initGame() {
-        mPlayerScore = STARTING_PLAYER_SCORE;
-        mProgrammScore = STARTING_PROGRAM_SCORE;
         mTextViewPlayerScore = (TextView) findViewById(R.id.one_player_game_text_view_player_score);
         mTextViewProgramScore = (TextView) findViewById(R.id
-                .one_player_game_text_view_programm_score);
-        mTableLayoutGameBoard =(TableLayout) findViewById(R.id.one_player_game_board);
-        initBoard();
-        updateScreen();
+                .one_player_game_text_view_ai_score);
+        mTableLayoutGameBoard = (TableLayout) findViewById(R.id.one_player_game_board);
+        mGame = new TicTacToeGame(PLAYER_NAME, AI_NAME, BOARD_SIZE, true);
+        updateScreen(mGame.getmBoardState(), mGame.getPlayerOneScore(), mGame.getPlayerTwoScore());
     }
 
-    private void initBoard(){
-        mBoard = new char[BOARD_ROWS_AND_COLUMNS_LENGTH][BOARD_ROWS_AND_COLUMNS_LENGTH];
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            for (int j = 0; j < BOARD_ROWS_AND_COLUMNS_LENGTH; j++){
-                mBoard[i][j] = NEUTRAL_CHAR;
-            }
-        }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(GAME_KEY, mGame);
     }
 
-    private boolean updateBoardState(int rowNumber, int columnNumber, char titleState) {
-        if(mBoard[rowNumber][columnNumber] == NEUTRAL_CHAR){
-            mBoard[rowNumber][columnNumber] = titleState;
-            return true;
-        }
-        return false;
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mGame = (TicTacToeGame)savedInstanceState.getSerializable(GAME_KEY);
+        updateScreen(mGame.getmBoardState(), mGame.getPlayerOneScore(), mGame.getPlayerTwoScore());
     }
 
-    private void updateScreen() {
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
+    private void updateScreen(char[][] boardState, int playerOneScore, int playerTwoScore) {
+        for (int i = 0; i < BOARD_SIZE; i++){
             TableRow row = (TableRow) mTableLayoutGameBoard.getChildAt(i);
-            for (int j = 0; j < BOARD_ROWS_AND_COLUMNS_LENGTH; j++){
+            for (int j = 0; j < BOARD_SIZE; j++){
                 Button button = (Button) row.getChildAt(j);
-                button.setText(String.valueOf(mBoard[i][j]));
+                button.setText(String.valueOf(boardState[i][j]));
             }
         }
-        mTextViewPlayerScore.setText(String.valueOf(mPlayerScore));
-        mTextViewProgramScore.setText(String.valueOf(mProgrammScore));
-    }
-
-    private boolean isEndGame(char playerChar, int rowNumber, int columnNumber) {
-        if(isVictory(playerChar, rowNumber, columnNumber)){
-            if(playerChar == PLAYER_CHAR){
-                Toast.makeText(this, getString(R.string.player_victory_message), Toast.LENGTH_SHORT).show();
-                mPlayerScore++;
-                initBoard();
-                updateScreen();
-                return true;
-            } else {
-                Toast.makeText(this, getString(R.string.program_victory_message), Toast.LENGTH_SHORT).show();
-                mProgrammScore++;
-                initBoard();
-                updateScreen();
-                return true;
-            }
-        } else if (isFullBoard()) {
-            Toast.makeText(this, getString(R.string.no_victory_message), Toast.LENGTH_SHORT).show();
-            initBoard();
-            updateScreen();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isVictory(char playerChar, int rowNumber, int columnNumber) {
-        if(isWinningRow(playerChar, rowNumber)){
-            return true;
-        } else if (isWinningColumn(playerChar, columnNumber)){
-            return true;
-        } else if (isWinningForwardDiagonal(playerChar)){
-            return true;
-        } else if (isWInningBackwardDiagonal(playerChar)){
-            return true;
-        } return false;
-    }
-
-    private boolean isWinningRow(char playerChar, int rowNumber) {
-        boolean isWinning = true;
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            isWinning = isWinning && mBoard[rowNumber][i] == playerChar;
-        }
-        return isWinning;
-    }
-
-    private boolean isWinningColumn(char playerChar, int columnNumber) {
-        boolean isWinning = true;
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            isWinning = isWinning && mBoard[i][columnNumber] == playerChar;
-        }
-        return isWinning;
-    }
-
-    private boolean isWinningForwardDiagonal(char playerChar) {
-        boolean isWinning = true;
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            isWinning = isWinning && playerChar == mBoard[i][i];
-        }
-        return isWinning;
-    }
-
-    private boolean isWInningBackwardDiagonal(char playerChar) {
-        int colPosition = BOARD_ROWS_AND_COLUMNS_LENGTH;
-        boolean isWinning = true;
-        for(int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            isWinning = isWinning && playerChar == mBoard[i][--colPosition];
-        }
-        return isWinning;
-    }
-
-    private boolean isFullBoard() {
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            for (int j = 0; j < BOARD_ROWS_AND_COLUMNS_LENGTH; j++){
-                if(mBoard[i][j] == NEUTRAL_CHAR){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public void playerTurn(View view) {
-        Button buttonClicked = (Button) view;
-        TableRow tableRow = (TableRow) buttonClicked.getParent();
-        int rowNumber = mTableLayoutGameBoard.indexOfChild(tableRow);
-        int columnNumber = tableRow.indexOfChild(buttonClicked);
-        if(updateBoardState(rowNumber, columnNumber, PLAYER_CHAR)){
-            updateScreen();
-            if(!isEndGame(PLAYER_CHAR, rowNumber, columnNumber)){
-                programTurn();
-            }
-        }
-    }
-
-    private void programTurn() {
-        int rowNumber;
-        int columnNumber;
-        do {
-            rowNumber = randomPosition(0, BOARD_ROWS_AND_COLUMNS_LENGTH-1);
-            columnNumber = randomPosition(0, BOARD_ROWS_AND_COLUMNS_LENGTH-1);
-        }
-        while (!updateBoardState(rowNumber, columnNumber, PROGRAM_CHAR));
-        updateScreen();
-        isEndGame(PROGRAM_CHAR, rowNumber, columnNumber);
-    }
-
-    private int randomPosition(int minPosition, int maxPosition) {
-        Random random = new Random();
-        return random.nextInt((maxPosition - minPosition) + 1) + minPosition;
+        mTextViewPlayerScore.setText(String.valueOf(playerOneScore));
+        mTextViewProgramScore.setText(String.valueOf(playerTwoScore));
     }
 
     public void back(View view) {
@@ -192,28 +65,16 @@ public class OnePlayerGame extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void newGame(View view) {
-        initGame();
+    public void newGame(View view){
+        mGame.resetBoard();
+        updateScreen(mGame.getmBoardState(), mGame.getPlayerOneScore(), mGame.getPlayerTwoScore());
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PLAYER_SCORE_KEY, mPlayerScore);
-        outState.putInt(PROGRAM_SCORE_KEY, mProgrammScore);
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            outState.putCharArray(String.valueOf(i), mBoard[i]);
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mPlayerScore = savedInstanceState.getInt(PLAYER_SCORE_KEY);
-        mProgrammScore = savedInstanceState.getInt(PROGRAM_SCORE_KEY);
-        for (int i = 0; i < BOARD_ROWS_AND_COLUMNS_LENGTH; i++){
-            mBoard[i] = savedInstanceState.getCharArray(String.valueOf(i));
-        }
-        updateScreen();
+    public void playTurn(View view){
+        TableRow row = (TableRow)view.getParent();
+        int rowPosition = mTableLayoutGameBoard.indexOfChild(row);
+        int colPosition = row.indexOfChild(view);
+        mGame.playTurn(rowPosition, colPosition);
+        updateScreen(mGame.getmBoardState(), mGame.getPlayerOneScore(), mGame.getPlayerTwoScore());
     }
 }
